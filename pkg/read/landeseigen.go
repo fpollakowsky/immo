@@ -131,7 +131,7 @@ func Wbm() {
 }
 
 func Gewobag() {
-	endpoint := "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?bezirke%5B%5D=friedrichshain-kreuzberg&bezirke%5B%5D=friedrichshain-kreuzberg-friedrichshain&bezirke%5B%5D=friedrichshain-kreuzberg-kreuzberg&bezirke%5B%5D=pankow-prenzlauer-berg&nutzungsarten%5B%5D=wohnung&gesamtmiete_von=&gesamtmiete_bis=&gesamtflaeche_von=&gesamtflaeche_bis=&zimmer_von=&zimmer_bis=&keinwbs=1&sort-by=recent"
+	endpoint := "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?bezirke%5B%5D=friedrichshain-kreuzberg&bezirke%5B%5D=friedrichshain-kreuzberg-friedrichshain&bezirke%5B%5D=friedrichshain-kreuzberg-kreuzberg&bezirke%5B%5D=pankow&bezirke%5B%5D=pankow-prenzlauer-berg&nutzungsarten%5B%5D=wohnung&gesamtmiete_von=&gesamtmiete_bis=850&gesamtflaeche_von=52&gesamtflaeche_bis=&zimmer_von=2&zimmer_bis=&keinwbs=1&sort-by=recent"
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
@@ -161,7 +161,7 @@ func Gewobag() {
 	split := strings.Split(string(b), "<!-- #primary -->")
 
 	if gewobagAngebot != split[0] {
-		_, err := telegram.SendTextToTelegramChat(5288776340, "Gewobag Website geändert\nhttps://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?bezirke%5B%5D=friedrichshain-kreuzberg&bezirke%5B%5D=friedrichshain-kreuzberg-friedrichshain&bezirke%5B%5D=friedrichshain-kreuzberg-kreuzberg&bezirke%5B%5D=pankow-prenzlauer-berg&nutzungsarten%5B%5D=wohnung&gesamtmiete_von=&gesamtmiete_bis=&gesamtflaeche_von=&gesamtflaeche_bis=&zimmer_von=&zimmer_bis=&keinwbs=1&sort-by=recent")
+		_, err := telegram.SendTextToTelegramChat(5288776340, "Gewobag Website geändert\n"+endpoint)
 		if err != nil {
 			log.Fatalln(err)
 			return
