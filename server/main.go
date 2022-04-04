@@ -7,7 +7,8 @@ import (
 
 func main() {
 	for {
-		read.Landeseigen()
+		read.Gewobag()
+		read.Wbm()
 
 		time.Sleep(30 * time.Second)
 	}

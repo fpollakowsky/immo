@@ -3,6 +3,7 @@ package read
 import (
 	"encoding/json"
 	"immo/pkg/telegram"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,6 +13,8 @@ import (
 )
 
 var knownURLs []string
+var gewobagAngebot string
+var wbmAngebot string
 
 func Landeseigen() {
 	endpoint := "https://inberlinwohnen.de/wp-content/themes/ibw/skript/wohnungsfinder.php"
@@ -67,7 +70,7 @@ func Landeseigen() {
 				}
 				if found == false {
 					knownURLs = append(knownURLs, parse.String())
-					telegram.SendTextToTelegramChat(1167392515, parse.String())
+					//telegram.SendTextToTelegramChat(1167392515, parse.String())
 				}
 			}
 		}
@@ -86,4 +89,82 @@ func GetStringInBetweenTwoString(str string, startS string, endS string) (result
 	}
 	result = newS[:e]
 	return result
+}
+
+func Wbm() {
+	endpoint := "https://www.wbm.de/wohnungen-berlin/angebote/"
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	req.Header.Set("Accept", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}(resp.Body)
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if wbmAngebot != string(b) {
+		_, err := telegram.SendTextToTelegramChat(5288776340, "WBM Website geändert\nhttps://www.wbm.de/wohnungen-berlin/angebote/")
+		if err != nil {
+			log.Fatalln(err)
+			return
+		}
+
+		wbmAngebot = string(b)
+	}
+}
+
+func Gewobag() {
+	endpoint := "https://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?bezirke%5B%5D=friedrichshain-kreuzberg&bezirke%5B%5D=friedrichshain-kreuzberg-friedrichshain&bezirke%5B%5D=friedrichshain-kreuzberg-kreuzberg&bezirke%5B%5D=pankow-prenzlauer-berg&nutzungsarten%5B%5D=wohnung&gesamtmiete_von=&gesamtmiete_bis=&gesamtflaeche_von=&gesamtflaeche_bis=&zimmer_von=&zimmer_bis=&keinwbs=1&sort-by=recent"
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	req.Header.Set("Accept", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}(resp.Body)
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if gewobagAngebot != string(b) {
+		_, err := telegram.SendTextToTelegramChat(5288776340, "Gewobag Website geändert\nhttps://www.gewobag.de/fuer-mieter-und-mietinteressenten/mietangebote/?bezirke%5B%5D=friedrichshain-kreuzberg&bezirke%5B%5D=friedrichshain-kreuzberg-friedrichshain&bezirke%5B%5D=friedrichshain-kreuzberg-kreuzberg&bezirke%5B%5D=pankow-prenzlauer-berg&nutzungsarten%5B%5D=wohnung&gesamtmiete_von=&gesamtmiete_bis=&gesamtflaeche_von=&gesamtflaeche_bis=&zimmer_von=&zimmer_bis=&keinwbs=1&sort-by=recent")
+		if err != nil {
+			log.Fatalln(err)
+			return
+		}
+
+		gewobagAngebot = string(b)
+	}
 }

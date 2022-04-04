@@ -10,7 +10,7 @@ import (
 )
 
 func SendTextToTelegramChat(chatId int, text string) (string, error) {
-	var telegramApi = "https://api.telegram.org/bot5092509744:AAEW8gPxC7ZupCMMKu1PiRB5IMRdes6pIlI/sendmessage"
+	var telegramApi = "https://api.telegram.org/bot5266298242:AAF_lbcm7UM3k3evul0CjuOCHpo-M2f6UPM/sendmessage"
 	fmt.Println(telegramApi)
 	response, err := http.PostForm(
 		telegramApi,
