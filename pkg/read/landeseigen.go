@@ -1,13 +1,16 @@
 package read
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"immo/pkg/telegram"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -92,6 +95,8 @@ func GetStringInBetweenTwoString(str string, startS string, endS string) (result
 }
 
 func Wbm() {
+	var regex = regexp.MustCompile(`10249|10247|10243|10179|10245|10997`)
+
 	endpoint := "https://www.wbm.de/wohnungen-berlin/angebote/"
 
 	req, err := http.NewRequest("GET", endpoint, nil)
@@ -119,14 +124,20 @@ func Wbm() {
 		log.Fatalln(err)
 	}
 
-	if wbmAngebot != string(b) {
-		_, err := telegram.SendTextToTelegramChat(5288776340, "WBM Website geändert\nhttps://www.wbm.de/wohnungen-berlin/angebote/")
-		if err != nil {
-			log.Fatalln(err)
-			return
-		}
+	trimmed := bytes.TrimLeft(b, "</head>")
+	trimmed = bytes.TrimRight(trimmed, "</main>")
 
-		wbmAngebot = string(b)
+	fmt.Println(wbmAngebot)
+	if regex.MatchString(string(b)) && wbmAngebot != string(trimmed) {
+		wbmAngebot = string(trimmed)
+		/*
+			_, err := telegram.SendTextToTelegramChat(-858814882, "NEUE WOHNUNG\nhttps://www.wbm.de/wohnungen-berlin/angebote/")
+			if err != nil {
+				log.Fatalln(err)
+				return
+			}
+
+		*/
 	}
 }
 
